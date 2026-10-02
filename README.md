@@ -240,8 +240,6 @@ If you utilize SCARdock-util or the SCARdock protocol in your academic work, ple
    Zhu, T., Cao, S., Su, P. C., Patel, R., Shah, H., Chokshi, H. K., Szep, S., & Hevener, K. E. (2017). *Hit Identification and Optimization in Virtual Screening: Practical Applications of SCARdock.* **Journal of Chemical Information and Modeling**, 57(4), 844–853. [DOI: 10.1021/acs.jcim.6b00334](https://pubs.acs.org/doi/10.1021/acs.jcim.6b00334)
 2. **SCARdock Screening Server**:  
    Zeng, L., Song, Q., & Liu, S. (2023). *SCARdock: A Web Server for Covalent Inhibitor Virtual Screening.* **ACS Omega**, 8(2), 2634–2641. [DOI: 10.1021/acsomega.2c08147](https://pubs.acs.org/doi/10.1021/acsomega.2c08147)
-3. **AutoDock Vina**:  
-   Eberhardt, J., Santos-Martins, D., Tillack, A. F., & Forli, S. (2021). *AutoDock Vina 1.2.0: New Docking Methods, Expanded Force Field, and Python Bindings.* **Journal of Chemical Information and Modeling**, 61(8), 3891–3898. [DOI: 10.1021/acs.jcim.1c00203](https://pubs.acs.org/doi/10.1021/acs.jcim.1c00203)
 
 ---
 
