@@ -236,8 +236,10 @@ print(f"Vina Box Size:   {size}")
 If you utilize SCARdock-util or the SCARdock protocol in your academic work, please cite:
 
 1. **SCARdock Method**:  
-   Zhu, T., Cao, S., Su, P. C., Patel, R., Shah, H., Chokshi, H. K., Szep, S., & Hevener, K. E. (2017). *Hit Identification and Optimization in Virtual Screening: Practical Applications of SCARdock.* **Journal of Chemical Information and Modeling**, 57(4), 844–853. [DOI: 10.1021/acs.jcim.6b00334](https://pubs.acs.org/doi/10.1021/acs.jcim.6b00334)
-2. **SCARdock Screening Server**:  
+   Ai, Y. B., Yu, L. L., Tan, X., Chai, X. Y., Liu, S. (2016). *Discovery of Covalent Ligands via Noncovalent Docking by Dissecting Covalent Docking Based on a “Steric-Clashes Alleviating Receptor (SCAR)” Strategy.* **Journal of Chemical Information and Modeling**, 56(8), 1563–1575. [DOI: 10.1021/acs.jcim.6b00334](https://pubs.acs.org/doi/10.1021/acs.jcim.6b00334)
+   
+   Ai, Y. B., Xu, S. Y., Zhang Y., Liu, Z. X., Liu, S. (2025). *High-efficiency discovery and structure-activity-relationship analysis of non-substrate-based covalent inhibitors of S-adenosylmethionine decarboxylase.* **Journal of Medicinal Chemistry**, 65(18), 15483-15494. [DOI:10.1021/acs.jmedchem.4c03191](https://pubs.acs.org/jmcmar/article-abstract/68/15/15483/5234957/High-Efficiency-Discovery-and-Structure-Activity)
+3. **SCARdock Screening Server**:  
    Zeng, L., Song, Q., & Liu, S. (2023). *SCARdock: A Web Server for Covalent Inhibitor Virtual Screening.* **ACS Omega**, 8(2), 2634–2641. [DOI: 10.1021/acsomega.2c08147](https://pubs.acs.org/doi/10.1021/acsomega.2c08147)
 
 ---
