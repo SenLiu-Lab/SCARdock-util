@@ -1,14 +1,13 @@
 package:
-  name: vinautil
-  version: 0.0.9
+  name: scardock-util
+  version: 0.1.0
 
 source:
   path: .
 
 build:
-  number: 4
+  number: 0
   skip: True  # [not linux64]
-#  script: python -m pip install . --no-deps --ignore-installed -vv
 
 requirements:
   host:
@@ -28,22 +27,24 @@ requirements:
     - conda-forge::rdkit
     - conda-forge::pymol-open-source 2.5.0 py310h292d129_6
     - conda-forge::loguru
-    - conda-forge::swig
-    - conda-forge::boost-cpp 
-    - conda-forge::sphinx
-    - conda-forge::sphinx_rtd_theme
     - conda-forge::vina 1.2.3 py310he924329_2
     - conda-forge::ipython
     - conda-forge::biopython
-    - conda-forge::prody # meeko dependecy (optionally, for covalent docking)
+    - conda-forge::prody # meeko dependency
+
+test:
+  commands:
+    - scardock --help
 
 about:
   home: https://github.com/SenLiu-Lab/SCARdock-util.git
   license: MIT
-  summary: 'autodock vina tools'
+  license_file: LICENSE
+  summary: 'A Comprehensive Toolkit for SCARdock Covalent Docking and Molecular Modeling'
   description: |
-    for autodock vina transform pqbqt to mol2, restore chemical bond information. 
-    make config file for autodock vina. add SCARdock
+    SCARdock-util provides end-to-end automated covalent docking workflows,
+    lossless PDBQT-to-MOL2 bond order restoration, pocket detection with Fpocket
+    and DeepPocket, and symmetry-corrected RMSD calculation for AutoDock Vina.
   dev_url: https://github.com/SenLiu-Lab/SCARdock-util.git
   doc_url: https://github.com/SenLiu-Lab/SCARdock-util.git
   doc_source_url: https://github.com/SenLiu-Lab/SCARdock-util.git

@@ -10,11 +10,9 @@ here = Path(__file__).parent.resolve()
 long_description = (here / "README.md").read_text(encoding="utf-8")
 
 setup(
-    name='vinautil',
+    name='scardock-util',
     version=version,
-    description=(
-    	'a tool for autodock vina'
-    	 ),
+    description='A Comprehensive Toolkit for SCARdock Covalent Docking and Molecular Modeling',
     long_description=long_description,
     long_description_content_type="text/markdown",
     url='https://github.com/SenLiu-Lab/SCARdock-util.git',

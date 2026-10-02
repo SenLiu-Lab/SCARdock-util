@@ -1,13 +1,13 @@
 <div align="center">
 
-# SCARdock-util (vinautil)
+# SCARdock-util (scardock-util)
 
 **SCARdock 共价分子对接、分子成键信息还原与计算生物学综合工具包**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux--64-green.svg)](https://github.com/SenLiu-Lab/SCARdock-util)
-[![Conda Channel](https://img.shields.io/badge/Conda-pylyzeng-brightgreen.svg)](https://anaconda.org/pylyzeng/vinautil)
+[![Conda Channel](https://img.shields.io/badge/Conda-pylyzeng-brightgreen.svg)](https://anaconda.org/pylyzeng/scardock-util)
 [![GitHub stars](https://img.shields.io/github/stars/SenLiu-Lab/SCARdock-util?style=social)](https://github.com/SenLiu-Lab/SCARdock-util)
 
 [English](./README.md) | [简体中文](./README_cn.md)
@@ -18,7 +18,7 @@
 
 ## 📖 项目简介
 
-**SCARdock-util**（在 Conda 生态中以包名 `vinautil` 发布）是一个面向 [AutoDock Vina](https://vina.scripps.edu/) 与 [SCARdock](https://pubs.acs.org/doi/10.1021/acs.jcim.6b00334) 共价抑制剂筛选协议的自动化分子建模与对接实用工具包。
+**SCARdock-util**（在 Conda 生态中以包名 `scardock-util` 发布，原包名 `vinautil`）是一个面向 [AutoDock Vina](https://vina.scripps.edu/) 与 [SCARdock](https://pubs.acs.org/doi/10.1021/acs.jcim.6b00334) 共价抑制剂筛选协议的自动化分子建模与对接实用工具包。
 
 在传统分子对接中，常面临以下痛点：
 1. **共价对接繁琐的手工预处理**：SCARdock 协议要求先对受体做 PDB 结构清洗，将发生共价反应的催化位点残基通过计算突变为甘氨酸（Glycine）以腾出空间容纳配体反应弹头，同时需加极性氢、计算盒子中心与尺寸；
@@ -91,8 +91,8 @@
 
 ```bash
 # 创建并激活环境
-conda create -n vinautil_env -c pylyzeng -c conda-forge -c bioconda vinautil --yes
-conda activate vinautil_env
+conda create -n scardock_env -c pylyzeng -c conda-forge -c bioconda scardock-util --yes
+conda activate scardock_env
 ```
 
 ### 2. 源码本地安装（开发者模式）

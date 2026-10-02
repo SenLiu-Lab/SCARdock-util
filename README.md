@@ -1,13 +1,13 @@
 <div align="center">
 
-# SCARdock-util (vinautil)
+# SCARdock-util (scardock-util)
 
 **A Comprehensive Toolkit for SCARdock Covalent Docking, Bond Restoration, and Molecular Modeling**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux--64-green.svg)](https://github.com/SenLiu-Lab/SCARdock-util)
-[![Conda Channel](https://img.shields.io/badge/Conda-pylyzeng-brightgreen.svg)](https://anaconda.org/pylyzeng/vinautil)
+[![Conda Channel](https://img.shields.io/badge/Conda-pylyzeng-brightgreen.svg)](https://anaconda.org/pylyzeng/scardock-util)
 [![GitHub stars](https://img.shields.io/github/stars/SenLiu-Lab/SCARdock-util?style=social)](https://github.com/SenLiu-Lab/SCARdock-util)
 
 [English](./README.md) | [简体中文](./README_cn.md)
@@ -18,7 +18,7 @@
 
 ## 📖 Introduction
 
-**SCARdock-util** (distributed in Conda as `vinautil`) is an all-in-one computational chemistry utility package tailored for [AutoDock Vina](https://vina.scripps.edu/) and the [SCARdock](https://pubs.acs.org/doi/10.1021/acs.jcim.6b00334) covalent inhibitor screening protocol.
+**SCARdock-util** (distributed in Conda as `scardock-util`, formerly `vinautil`) is an all-in-one computational chemistry utility package tailored for [AutoDock Vina](https://vina.scripps.edu/) and the [SCARdock](https://pubs.acs.org/doi/10.1021/acs.jcim.6b00334) covalent inhibitor screening protocol.
 
 Molecular docking with standard Vina and PDBQT format often encounters two major challenges:
 1. **Manual complexity in covalent docking**: Setting up SCARdock requires tedious pre-docking preparation, including cleaning PDB coordinates, in-silico mutation of the targeted catalytic residue into Glycine to accommodate the covalent warhead, preparing polar hydrogens, and positioning docking boxes.
@@ -82,8 +82,8 @@ Target Receptor (PDB) + Ligand (MOL2/SDF)
 
 ```bash
 # Create and activate environment
-conda create -n vinautil_env -c pylyzeng -c conda-forge -c bioconda vinautil --yes
-conda activate vinautil_env
+conda create -n scardock_env -c pylyzeng -c conda-forge -c bioconda scardock-util --yes
+conda activate scardock_env
 ```
 
 ### 2. Installation from Source (Development)
