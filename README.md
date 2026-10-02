@@ -5,6 +5,7 @@
 **A Comprehensive Toolkit for SCARdock Covalent Docking, Bond Restoration, and Molecular Modeling**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](./LICENSE)
+[![GitHub Release](https://img.shields.io/github/v/release/SenLiu-Lab/SCARdock-util)](https://github.com/SenLiu-Lab/SCARdock-util/releases)
 [![Python Version](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
 [![Platform](https://img.shields.io/badge/Platform-Linux--64-green.svg)](https://github.com/SenLiu-Lab/SCARdock-util)
 [![Conda Channel](https://img.shields.io/badge/Conda-pylyzeng-brightgreen.svg)](https://anaconda.org/pylyzeng/scardock-util)
