@@ -1,10 +1,17 @@
+from __future__ import annotations
 from dataclasses import dataclass, field
 from pathlib import Path
-from openbabel import pybel
+try:
+    from openbabel import pybel
+except ImportError:
+    pybel = None
 from typing import Optional, NoReturn, List, Union, Dict, Tuple
 import re
 import tempfile, os
-import numpy as np
+try:
+    import numpy as np
+except ImportError:
+    np = None
 
 
 @dataclass
@@ -103,14 +110,16 @@ class PDBQTparser:
 @dataclass
 class PDBQTtoMol2:
     '''
-    pdbqt 还原为mol2格式，还原健价信息, 删除所有氢元素方便后续计算RMSDß
+    pdbqt 还原为mol2格式，还原健价信息, 删除所有氢元素方便后续计算RMSD
     '''
     original_mol2_file: str
     undock_pdbqt: str
     docked_pdbqt: List[str] # autodock vina outputs
-    pybel_mol: (List[pybel.Molecule], type(None)) = field(init=False)
+    pybel_mol: Optional[List[object]] = field(init=False, default=None)
 
     def __post_init__(self):
+        if pybel is None:
+            raise ImportError("OpenBabel (pybel) is required for PDBQTtoMol2 conversion.")
         docked_pdbqt_pybel_mol = [pybel.readstring('pdbqt', i) for i in self.docked_pdbqt]
         self.pybel_mol = self.get_pybel_mol(docked_pdbqt_pybel_mol)
     
@@ -144,52 +153,35 @@ class PDBQTtoMol2:
             return []
 
     def __update_coordinates(self, undocked_pdbqt: Dict, docked_pdbqt: Dict, original_mol2: Dict) -> Optional[pybel.Molecule]:
-        assert len(undocked_pdbqt) == len(docked_pdbqt) == len(
-            original_mol2), f'Not equal number of atoms in molecules\n' \
-                            f'undocked_pdbqt: {len(undocked_pdbqt)}\n' \
-                            f'docked_pdbqt: {len(docked_pdbqt)}\n' \
-                            f'original_mol2: {len(original_mol2)}'
+        if not (len(undocked_pdbqt) == len(docked_pdbqt) == len(original_mol2)):
+            raise ValueError(
+                f"Atom count mismatch across representations:\n"
+                f"undocked_pdbqt: {len(undocked_pdbqt)}, docked_pdbqt: {len(docked_pdbqt)}, original_mol2: {len(original_mol2)}"
+            )
+
         original_coord = {}
         for key in original_mol2:
-            coord_update = [round(x, 3) for x in original_mol2[key]]
-            coord_update = tuple(coord_update)
-            original_coord.update({key: coord_update})
+            coord_update = tuple(round(x, 3) for x in original_mol2[key])
+            original_coord[key] = coord_update
+
         coord_map = {}
+        used_undocked = set()
         for idx, coord in original_coord.items():
-            # potential bottleneck for large molecules
+            best_ind = None
+            best_dist_sq = float('inf')
             for ind, coordinates in undocked_pdbqt.items():
-                n = 0
-                if coord[0] == coordinates[0]:
-                    n = n + 1
-                    if coord[1] == coordinates[1]:
-                        n = n + 1
-                        if coord[2] == coordinates[2]:
-                            n = n + 1
-                    else:
-                        if coord[2] == coordinates[2]:
-                            n = n + 1
-                else:
-                    if coord[1] == coordinates[1]:
-                        n = n + 1
-                        if coord[2] == coordinates[2]:
-                            n = n + 1
-                    else:
-                        if coord[2] == coordinates[2]:
-                            n = n + 1
-                if n == 3:
-                    coord_map.update({idx: ind})
-                elif n == 2:
-                    if idx in coord_map:
-                        pass
-                    else:
-                        coord_map.update({idx: ind})
-                elif n == 1:
-                    if idx in coord_map:
-                        pass
-                    else:
-                        coord_map.update({idx: ind})
-                else:
-                    pass
+                if ind in used_undocked:
+                    continue
+                dist_sq = (coord[0] - coordinates[0])**2 + (coord[1] - coordinates[1])**2 + (coord[2] - coordinates[2])**2
+                if dist_sq < best_dist_sq:
+                    best_dist_sq = dist_sq
+                    best_ind = ind
+
+            # 容忍由于浮点舍入引起的微小偏差 (< 0.15 Å)
+            if best_ind is not None and best_dist_sq <= 0.0225:
+                coord_map[idx] = best_ind
+                used_undocked.add(best_ind)
+
         if len(coord_map) == len(original_mol2):
             coord_conform = {}
             for index1, index2 in coord_map.items():
@@ -202,7 +194,7 @@ class PDBQTtoMol2:
             self.pybel_mol = mol2
             return mol2
         else:
-            raise ValueError('Lost coordinates in mapping')
+            raise ValueError(f"Lost coordinates in 1-to-1 mapping: mapped {len(coord_map)} of {len(original_mol2)} atoms.")
 
     def to_file(self, out_file: Path, fmt: str = 'mol2') -> NoReturn:
         if isinstance(self.pybel_mol, list):
@@ -212,7 +204,7 @@ class PDBQTtoMol2:
         elif isinstance(self.pybel_mol, pybel.Molecule):
             self.pybel_mol.write(fmt, out_file.as_posix(), overwrite=True)
         else:
-            raise print('No pybel.Molecule found')
+            raise ValueError('No pybel.Molecule found')
 
     def to_string(self, fmt: str = 'mol2') -> Union[List[str], str]:
         if isinstance(self.pybel_mol, list):
@@ -220,7 +212,7 @@ class PDBQTtoMol2:
         elif isinstance(self.pybel_mol, pybel.Molecule):
             return self.pybel_mol.write(fmt)
         else:
-            raise print('No pybel.Molecule found')
+            raise ValueError('No pybel.Molecule found')
 
 def mol2pdb(read_file: Path, out_file: Path, s_fmt='mol2', t_fmt='pdb' ):
     # mol2 文件格式转化为pdb格式

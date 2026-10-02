@@ -17,7 +17,7 @@ setup(
     	 ),
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url='https://github.com/hotwa/vinautil.git',
+    url='https://github.com/SenLiu-Lab/SCARdock-util.git',
     author='lingyu zeng',
     author_email='pylyzeng@gmail.com',
     license='MIT License',

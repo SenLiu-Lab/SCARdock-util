@@ -1,5 +1,15 @@
-# install shell script for the project
-$PYTHON -m pip install . --no-deps --ignore-installed -vv
-git clone https://mirror.ghproxy.com/https://github.com/forlilab/Meeko
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Install current vinautil package into conda build prefix
+"$PYTHON" -m pip install . --no-deps --no-build-isolation -vv
+
+# Resilient clone of Meeko with official repo fallback
+echo "Cloning Meeko..."
+if ! git clone --depth 1 https://github.com/forlilab/Meeko.git; then
+    echo "Direct clone failed, retrying via mirror..."
+    git clone --depth 1 https://mirror.ghproxy.com/https://github.com/forlilab/Meeko.git
+fi
+
 cd Meeko
-$PYTHON -m pip install .  --no-deps --ignore-installed -vv
+"$PYTHON" -m pip install . --no-deps --no-build-isolation -vv

@@ -26,7 +26,7 @@
 
 **SCARdock-util** 彻底解决了上述问题，提供了一键全自动突变与共价对接、PDBQT 无损成键拓扑恢复、对称性校正 RMSD 计算以及结合口袋预测等一系列开箱即用的功能。
 
-本项目所有核心算法均由**曾令宇**在湖北工业大学生物工程与食品学院攻读硕士研究生期间，在**刘森教授**（[刘森课题组](http://www.liugroup.site)）指导下开发完成。
+本项目所有核心算法均由**曾令宇**在[湖北工业大学生命科学与健康工程学院](https://life.hbut.edu.cn/)攻读硕士研究生期间，在**刘森教授**（[导师主页](https://life.hbut.edu.cn/info/1168/1745.htm)）指导下开发完成。
 
 ---
 
@@ -260,9 +260,9 @@ print(f"Vina 盒子尺寸大小: {size}")
 
 ## 👥 致谢与交流
 
-- **刘森 教授**（[导师主页](https://sgsp.hbut.edu.cn/info/1085/1794.htm)）
-- **宋奇 老师**（[个人主页](https://sgsp.hbut.edu.cn/info/1087/1813.htm)）
-- [湖北工业大学刘森教授生物计算与结构生物学实验室](http://www.liugroup.site)
+- **刘森 教授**（[导师主页](https://life.hbut.edu.cn/info/1168/1745.htm)）
+- **宋奇 老师**（[个人主页](https://life.hbut.edu.cn/info/1229/1863.htm)）
+- [湖北工业大学生命科学与健康工程学院](https://life.hbut.edu.cn/)
 
 ---
 

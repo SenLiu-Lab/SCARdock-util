@@ -1,29 +1,62 @@
 import argparse
 from pathlib import Path
-import os,sys
+import os, sys, shutil
 import subprocess
 import datetime
-from loguru import logger
+from typing import List, Optional
 
-from pymol import cmd
-from openbabel import pybel
-from typing import List
-from vinautil.vutils.obabel import PDBQTtoMol2, PDBQTparser
-from vinautil.vutils.spyrmsd_load import symmrmsd_mol2_list
-from vinautil.vina import Vina
-from vinautil.pymolutils.mutagenesis import Mutagenesis_site
-
-# 获取当前 Python 解释器的位置
+# 获取当前 Python 解释器及工具路径
 python_exec_prefix = Path(sys.exec_prefix)
 here = Path(__file__).parent.resolve()
 python2_interpreter = python_exec_prefix.joinpath('bin/python2')
-python3_interpreter = python_exec_prefix.joinpath('bin/python3')
+python3_interpreter = Path(sys.executable)
 prepare_ligand4 = python_exec_prefix.joinpath('MGLToolsPckgs/AutoDockTools/Utilities24/prepare_ligand4.py')
 prepare_receptor4 = python_exec_prefix.joinpath('MGLToolsPckgs/AutoDockTools/Utilities24/prepare_receptor4.py')
 mk_prepare_ligand = python_exec_prefix.joinpath('bin/mk_prepare_ligand.py')
 
+def _resolve_tool(tool_path: Path, tool_name: str) -> str:
+    """Resolve executable or script path from prefix or system PATH."""
+    if tool_path.exists():
+        return tool_path.as_posix()
+    which_res = shutil.which(tool_name)
+    if which_res:
+        return which_res
+    return tool_path.as_posix()
+
+def _log(level: str, message: str) -> None:
+    try:
+        from loguru import logger
+        getattr(logger, level.lower(), logger.info)(message)
+    except ImportError:
+        print(f"[{level.upper()}] {message}")
+
+def _run_cmd(argv: List[str], output_file: Path, desc: str, timeout: int = 300) -> None:
+    """Execute external CLI tools robustly with error handling and output checks."""
+    _log("info", f"Running {desc}: {' '.join(argv)}")
+    try:
+        res = subprocess.run(
+            argv,
+            check=True,
+            capture_output=True,
+            text=True,
+            timeout=timeout
+        )
+        if res.stdout:
+            _log("info", f"{desc} output:\n{res.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        err_msg = f"{desc} failed with exit code {e.returncode}.\nStderr: {e.stderr}\nStdout: {e.stdout}"
+        _log("error", err_msg)
+        raise RuntimeError(f"{desc} failed (exit code {e.returncode}): {e.stderr or e.stdout}") from e
+    except subprocess.TimeoutExpired as e:
+        _log("error", f"{desc} timed out after {timeout}s.")
+        raise RuntimeError(f"{desc} timed out after {timeout} seconds.") from e
+
+    if not output_file.exists() or output_file.stat().st_size == 0:
+        raise RuntimeError(f"{desc} succeeded but expected output file was not found or is empty: {output_file}")
+
 def dockvina(receptor:Path, ligand:Path, center:List[float], box_size:List[float], 
-             exhaustiveness:int =32,n_poses:int =20,out_n_poses:int = 20):
+             exhaustiveness:int =32, n_poses:int =20, out_n_poses:int = 20):
+    from vinautil.vina import Vina
     out_stem = f'{receptor.stem}--{ligand.stem}'
     out_dir = receptor.parent
     v = Vina(sf_name='vina')
@@ -44,6 +77,12 @@ def dockvina(receptor:Path, ligand:Path, center:List[float], box_size:List[float
     return docked_file
 
 def SCARdockbase(receptor: Path, ligand: Path, chain: str, site: str):
+    from pymol import cmd
+    from openbabel import pybel
+    from vinautil.vutils.obabel import PDBQTtoMol2, PDBQTparser
+    from vinautil.vutils.spyrmsd_load import symmrmsd_mol2_list
+    from vinautil.pymolutils.mutagenesis import Mutagenesis_site
+
     # clean pdb file
     receptor = cleanATOM(receptor.as_posix()) # same pyrosetta.toolbox cleanATOM
     if not receptor.exists():
@@ -51,15 +90,17 @@ def SCARdockbase(receptor: Path, ligand: Path, chain: str, site: str):
     # protein Mutagenesis (GLY)
     print('Mutagenesis site: ', site)
     muta_receptor = receptor.parent.joinpath(f'{receptor.stem}_{site}G.pdb')
-    Mutagenesis_site(filename=receptor, mutation_type='GLY', site=int(site), outfile= muta_receptor)
+    Mutagenesis_site(filename=receptor, mutation_type='GLY', site=int(site), outfile=muta_receptor)
     # prepare receptor dock file
     print('Prepare PDBQT receptor file: ', muta_receptor.name)
     receptor_pdbqt = receptor.parent.joinpath(f"{muta_receptor.stem}.pdbqt")
-    CMD_ = f'{python2_interpreter} {prepare_receptor4} -r {receptor.as_posix()} -o {receptor_pdbqt.as_posix()} -A checkhydrogens'
-    p = subprocess.Popen(CMD_, shell=True, stdout=subprocess.PIPE)
-    while p.poll() is None:  # progress still runing
-            subprocess_read_res = p.stdout.read().decode('utf-8')
-            logger.info(f'''Task record : {datetime.datetime.now()}:\n {subprocess_read_res}''')
+    py2_bin = _resolve_tool(python2_interpreter, 'python2')
+    prep_rec = _resolve_tool(prepare_receptor4, 'prepare_receptor4.py')
+    _run_cmd(
+        [py2_bin, prep_rec, '-r', muta_receptor.as_posix(), '-o', receptor_pdbqt.as_posix(), '-A', 'checkhydrogens'],
+        receptor_pdbqt,
+        "Receptor PDBQT preparation"
+    )
     # prepare ligand dock file(file)
     ligand = Path(ligand)
     ligand_pdbqt = ligand.parent.joinpath(f"{ligand.stem}.pdbqt")
@@ -76,11 +117,13 @@ def SCARdockbase(receptor: Path, ligand: Path, chain: str, site: str):
     molH.write('mol2', file_polarHydrogens.as_posix(), overwrite=True)
     # use meeko backend prepare ligand, optional MGLtools prepare_ligand4.py
     print('Prepare PDBQT ligand file: ', ligand.name)
-    CMD_ = f'{python3_interpreter} {mk_prepare_ligand} -i {file_polarHydrogens.as_posix()} -o {ligand_pdbqt.as_posix()}'
-    p = subprocess.Popen(CMD_, shell=True, stdout=subprocess.PIPE)
-    while p.poll() is None:  
-            subprocess_read_res = p.stdout.read().decode('utf-8')
-            logger.info(f'''Task record : {datetime.datetime.now()}:\n {subprocess_read_res}''')
+    py3_bin = _resolve_tool(python3_interpreter, 'python3')
+    prep_lig = _resolve_tool(mk_prepare_ligand, 'mk_prepare_ligand.py')
+    _run_cmd(
+        [py3_bin, prep_lig, '-i', file_polarHydrogens.as_posix(), '-o', ligand_pdbqt.as_posix()],
+        ligand_pdbqt,
+        "Ligand PDBQT preparation"
+    )
     # box center, covalent beta carbon coordinate
     cmd.reinitialize('everything')
     cmd.load(receptor.as_posix())
@@ -95,10 +138,10 @@ def SCARdockbase(receptor: Path, ligand: Path, chain: str, site: str):
     # SCARdock docking
     # ! be careful, orginal molecule coordinate should in docking box
     print("The molecular coordinates of the input mol2 file should be within a range of 40 angstroms, with the covalent residue's beta carbon atom as the center of the extended box.")
-    docked_file = dockvina(receptor=receptor_pdbqt, ligand=ligand_pdbqt, center=center, box_size=[40, 40, 40], exhaustiveness=32,n_poses=20,out_n_poses = 20)
+    docked_file = dockvina(receptor=receptor_pdbqt, ligand=ligand_pdbqt, center=center, box_size=[40, 40, 40], exhaustiveness=32, n_poses=20, out_n_poses=20)
     # restore mol2 (update coordinate)
     print('Restore mol2 file: ', ligand.name)
-    ins = PDBQTtoMol2(file_polarHydrogens.read_text(),ligand_pdbqt.read_text(),PDBQTparser(docked_file).get_modules())
+    ins = PDBQTtoMol2(file_polarHydrogens.read_text(), ligand_pdbqt.read_text(), PDBQTparser(docked_file).get_modules())
     res_mol2 = ins.to_string() # mol2 string list
     # write mol2
     for n,m in enumerate(res_mol2):
@@ -114,24 +157,30 @@ RMSD: {res_list}''')
 
 def SCARdock():
     # cmd lineparser
-    parser = argparse.ArgumentParser(description='SCARdock Docking')
-    parser.add_argument('-r', '--receptor',  metavar="recepotr file", nargs='?', default=sys.stdin, help='recepotr file, support pdb')
-    parser.add_argument('-l', '--ligand',  metavar="ligand file", nargs='?', default=sys.stdin, help='ligand file, molecule file (MOL2, SDF,...)(use meeko prepare)')
-    parser.add_argument('-s', '--site',  metavar="residue covalent site", nargs='?', default=sys.stdin, help='residue covalent site')
-    parser.add_argument('-c', '--chain',  metavar="covalent chain ID", nargs='?', default=sys.stdin, help='covalent chain ID')
-    parser.add_argument('-log', '--log_dir', metavar="output log directory", nargs='?', default='./', help='Relative Path')
+    parser = argparse.ArgumentParser(description='SCARdock Covalent Docking Workflow')
+    parser.add_argument('-r', '--receptor', type=Path, required=True, help='Receptor PDB structure file')
+    parser.add_argument('-l', '--ligand', type=Path, required=True, help='Ligand molecule file (MOL2, SDF, ...)')
+    parser.add_argument('-s', '--site', type=int, required=True, help='Residue covalent attachment site index (e.g. 797)')
+    parser.add_argument('-c', '--chain', type=str, required=True, help='Target receptor chain ID (e.g. A)')
+    parser.add_argument('-log', '--log_dir', type=Path, default=Path('./'), help='Output log directory (default: current directory)')
     args = parser.parse_args()
-    # 使用logger.add()方法，指定日志文件的路径和名称，以及编码方式
-    log_file = Path(args.log_dir) / f'scardock.log'
-    logger.add(log_file.as_posix(), encoding='utf-8')
-    logger.info(f'SCARdock docking...')
-    # command line SCARdock
+    
+    # 确保日志输出目录存在
+    args.log_dir.mkdir(parents=True, exist_ok=True)
+    try:
+        from loguru import logger
+        log_file = args.log_dir / 'scardock.log'
+        logger.add(log_file.as_posix(), encoding='utf-8')
+        logger.info('SCARdock covalent docking initialized...')
+    except ImportError:
+        pass
+    
     print('''SCARdock method DOI: 10.1021/acs.jcim.6b00334
 SCARdock screening server(https://scardock.com) DOI: 10.1021/acsomega.2c08147
-lab site: http://liugroup.site
+lab site: https://life.hbut.edu.cn/info/1168/1745.htm
 author: Lingyu Zeng mail: pylyzeng@gmail.com
 ''')
-    SCARdockbase(receptor=Path(args.receptor), ligand=Path(args.ligand), chain=args.chain, site=str(args.site))
+    SCARdockbase(receptor=args.receptor, ligand=args.ligand, chain=args.chain, site=str(args.site))
     
 def SCARdocktest():
     # Run SCARdock with predefined test parameters
@@ -142,7 +191,7 @@ def SCARdocktest():
     chain = 'A'
     SCARdockbase(receptor=Path(receptor), ligand=Path(ligand), chain=chain, site=str(site))
     
-def cleanATOM(pdb_file, out_file=None, ext="_clean.pdb")->Path:
+def cleanATOM(pdb_file, out_file=None, ext="_clean.pdb") -> Path:
     """Extract all ATOM and TER records in a PDB file and write them to a new file.
 
     Args:
@@ -164,14 +213,3 @@ def cleanATOM(pdb_file, out_file=None, ext="_clean.pdb")->Path:
     with open(out_file, "w") as fid:
         fid.writelines(good)
     return Path(out_file)
-    
-    
-    
-    
-    
-    
-
-
-    
-    
-    

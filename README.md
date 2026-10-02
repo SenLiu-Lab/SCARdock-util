@@ -26,7 +26,7 @@ Molecular docking with standard Vina and PDBQT format often encounters two major
 
 **SCARdock-util** solves these problems with automated workflows, coordinate-topology mapping, and symmetry-aware post-processing.
 
-All core algorithms were developed by **Lingyu Zeng** during graduate research under the supervision of **Prof. Sen Liu** ([Sen Liu Lab](http://www.liugroup.site)), College of Bioengineering and Food Science, Hubei University of Technology.
+All core algorithms were developed by **Lingyu Zeng** during graduate research under the supervision of **Prof. Sen Liu** ([Sen Liu Lab](https://life.hbut.edu.cn/info/1168/1745.htm)), [School of Life Sciences and Health Engineering](https://life.hbut.edu.cn/), Hubei University of Technology.
 
 ---
 
@@ -247,9 +247,9 @@ If you utilize SCARdock-util or the SCARdock protocol in your academic work, ple
 
 ## 👥 Acknowledgements
 
-- **Prof. Sen Liu** ([Personal Page](https://sgsp.hbut.edu.cn/info/1085/1794.htm)) - Project Advisor
-- **Prof. Qi Song** ([Personal Page](https://sgsp.hbut.edu.cn/info/1087/1813.htm)) - Research Collaborator
-- [Liu Lab (Biocomputing & Structural Biology Group)](http://www.liugroup.site)
+- **Prof. Sen Liu** ([Personal Page](https://life.hbut.edu.cn/info/1168/1745.htm)) - Project Advisor
+- **Prof. Qi Song** ([Personal Page](https://life.hbut.edu.cn/info/1229/1863.htm)) - Research Collaborator
+- [School of Life Sciences and Health Engineering, Hubei University of Technology](https://life.hbut.edu.cn/)
 
 ---
 
