@@ -1,0 +1,49 @@
+name: Monthly Actions Cleanup
+
+on:
+  schedule:
+    # 每个月 1 日 00:00 UTC（北京时间上午 08:00）自动执行
+    - cron: '0 0 1 * *'
+  workflow_dispatch:
+    inputs:
+      retain_days:
+        description: '保留多少天之内的运行历史（默认 30 天）'
+        required: false
+        default: '30'
+        type: string
+      keep_minimum_runs:
+        description: '每个工作流至少保留最近几次的运行记录（默认保留最近 5 次）'
+        required: false
+        default: '5'
+        type: string
+
+permissions:
+  actions: write
+  contents: read
+
+jobs:
+  cleanup-workflow-runs:
+    name: Clean Old Workflow Runs & Artifacts
+    runs-on: ubuntu-latest
+    steps:
+      - name: Delete old workflow runs and logs
+        uses: Mattraks/delete-workflow-runs@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          repository: ${{ github.repository }}
+          retain_days: ${{ inputs.retain_days || '30' }}
+          keep_minimum_runs: ${{ inputs.keep_minimum_runs || '5' }}
+
+      - name: Delete expired Actions caches
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          echo "Checking and purging stale GitHub Actions caches..."
+          gh extension install actions/gh-actions-cache 2>/dev/null || true
+          gh actions-cache list -R "${{ github.repository }}" --limit 100 2>/dev/null | while read -r cache_key rest; do
+            if [ -n "$cache_key" ]; then
+              echo "Evicting cache: $cache_key"
+              gh actions-cache delete "$cache_key" -R "${{ github.repository }}" --confirm 2>/dev/null || true
+            fi
+          done
+          echo "Actions cleanup successfully completed!"
