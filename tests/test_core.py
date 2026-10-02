@@ -5,10 +5,10 @@ import os
 from pathlib import Path
 
 # Add package directory to path
-sys.path.insert(0, str(Path(__file__).parent.parent / 'vinautil'))
+sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from vinautil.scardock import cleanATOM, SCARdock
-from vinautil.vutils.obabel import PDBQTparser
+from scardock_util.scardock import cleanATOM, SCARdock
+from scardock_util.vutils.obabel import PDBQTparser
 
 
 class TestPDBQTParser(unittest.TestCase):

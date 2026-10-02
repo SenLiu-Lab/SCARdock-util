@@ -1,4 +1,4 @@
-from setuptools import setup # auto find packages please import find_packages
+from setuptools import setup, find_packages
 from pathlib import Path
 import yaml
 
@@ -25,22 +25,18 @@ setup(
         'Programming Language :: Python :: 3',
         "Programming Language :: Python :: 3 :: Only",
     ],
-    keywords=["tools", "autodock vina"],
-    package_dir={"": "vinautil"},  # Optional
-    packages=['vinautil', 'vinautil.vutils', 'vinautil.pymolutils'],
+    keywords=["tools", "autodock vina", "scardock", "covalent docking"],
+    packages=['scardock_util', 'scardock_util.vutils', 'scardock_util.pymolutils'],
     python_requires='>=3.9',
     install_requires=[],
-    dependency_links=[
-        "https://github.com/openbabel/openbabel"
-    ],
     platforms=["linux-64"],
     entry_points={
         'console_scripts': [
-            'scardock = vinautil.scardock:SCARdock',  # Replace 'my_module' with the actual module that contains SCARdock function
-            'scardocktest = vinautil.scardock:SCARdocktest'
+            'scardock = scardock_util.scardock:SCARdock',
+            'scardocktest = scardock_util.scardock:SCARdocktest'
         ],
     },
     package_data={
-        'vinautil': ['test/*'],
+        'scardock_util': ['test/*'],
     }
 )

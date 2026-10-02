@@ -56,7 +56,7 @@ def _run_cmd(argv: List[str], output_file: Path, desc: str, timeout: int = 300) 
 
 def dockvina(receptor:Path, ligand:Path, center:List[float], box_size:List[float], 
              exhaustiveness:int =32, n_poses:int =20, out_n_poses:int = 20):
-    from vinautil.vina import Vina
+    from scardock_util.vina import Vina
     out_stem = f'{receptor.stem}--{ligand.stem}'
     out_dir = receptor.parent
     v = Vina(sf_name='vina')
@@ -79,9 +79,9 @@ def dockvina(receptor:Path, ligand:Path, center:List[float], box_size:List[float
 def SCARdockbase(receptor: Path, ligand: Path, chain: str, site: str):
     from pymol import cmd
     from openbabel import pybel
-    from vinautil.vutils.obabel import PDBQTtoMol2, PDBQTparser
-    from vinautil.vutils.spyrmsd_load import symmrmsd_mol2_list
-    from vinautil.pymolutils.mutagenesis import Mutagenesis_site
+    from scardock_util.vutils.obabel import PDBQTtoMol2, PDBQTparser
+    from scardock_util.vutils.spyrmsd_load import symmrmsd_mol2_list
+    from scardock_util.pymolutils.mutagenesis import Mutagenesis_site
 
     # clean pdb file
     receptor = cleanATOM(receptor.as_posix()) # same pyrosetta.toolbox cleanATOM

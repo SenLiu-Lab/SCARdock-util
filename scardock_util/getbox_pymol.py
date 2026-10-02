@@ -20,7 +20,7 @@ import sys
 #            fixed some bugs: python 2/3 and PyMOL 1.x are supported;
 #            added support to AutoDock;
 #            added tutorials in English;
-# 2023-03-05 uploaded to GitHub https://github.com/hotwa/vinautil
+# 2023-03-05 uploaded to GitHub https://github.com/SenLiu-Lab/SCARdock-util
 #            add function getvinabox and from_complex_get_box update by lingyuzeng(mail: pylyzeng@gmail.com)
 # NOTES: 
 # This program is free software; you can redistribute it and/or modify it under the terms of the GNU

@@ -13,7 +13,10 @@ from typing import Iterable
 from collections.abc import Iterable as _Iterator
 
 
-from vinautil.utils.typecheck import typeassert
+try:
+    from scardock_util.vutils.typecheck import typeassert
+except ImportError:
+    from .vutils.typecheck import typeassert
 
 
 @typeassert(x=float, y=float, z=float)

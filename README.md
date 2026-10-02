@@ -145,8 +145,8 @@ scardock \
 
 ```python
 from pathlib import Path
-from vinautil.vutils.obabel import PDBQTtoMol2, PDBQTparser
-from vinautil.vutils.spyrmsd_load import symmrmsd_mol2_list
+from scardock_util.vutils.obabel import PDBQTtoMol2, PDBQTparser
+from scardock_util.vutils.spyrmsd_load import symmrmsd_mol2_list
 
 ref_mol2 = Path("ligand.mol2").read_text()
 undocked_pdbqt = Path("ligand.pdbqt").read_text()
@@ -180,7 +180,7 @@ print("Symmetry RMSD (Å):", [f"{x:.2f}" for x in rmsd_values])
 
 ```python
 from pathlib import Path
-from vinautil.vutils.fpocket import FpocketBox
+from scardock_util.vutils.fpocket import FpocketBox
 
 # Run pocket detection on target receptor
 fp = FpocketBox(pdb_file=Path("receptor.pdb"))
@@ -205,15 +205,14 @@ print(f"Vina Box Size:   {size}")
 ├── setup.py                   # Setuptools packaging script
 ├── conda_pack.md              # Conda build & Anaconda upload guide
 ├── unittest.py                # Unit test runner
-├── vinautil/                  # Core library source code
-│   ├── vinautil/
-│   │   ├── scardock.py        # Core SCARdock workflow & CLI commands
-│   │   ├── vina.py            # AutoDock Vina wrapper & scoring routines
-│   │   ├── restore_mol2.py    # PDBQT to MOL2 coordinate-bond mapper
-│   │   ├── parserPDBQT.py     # PDBQT multi-pose text parser
-│   │   ├── pymolutils/        # PyMOL scripts (mutation, color, hydrogen)
-│   │   ├── vutils/            # Auxiliary tools (Fpocket, DeepPocket, RMSD)
-│   │   └── test/              # Benchmark data (4I24 crystal structure)
+├── scardock_util/             # Core Python package source
+│   ├── scardock.py            # Core SCARdock workflow & CLI commands
+│   ├── vina.py                # AutoDock Vina wrapper & scoring routines
+│   ├── restore_mol2.py        # PDBQT to MOL2 coordinate-bond mapper
+│   ├── parserPDBQT.py         # PDBQT multi-pose text parser
+│   ├── pymolutils/            # PyMOL scripts (mutation, color, hydrogen)
+│   ├── vutils/                # Auxiliary tools (Fpocket, DeepPocket, RMSD)
+│   └── test/                  # Benchmark data (4I24 crystal structure)
 └── README.md
 ```
 

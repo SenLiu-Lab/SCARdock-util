@@ -158,8 +158,8 @@ scardock \
 
 ```python
 from pathlib import Path
-from vinautil.vutils.obabel import PDBQTtoMol2, PDBQTparser
-from vinautil.vutils.spyrmsd_load import symmrmsd_mol2_list
+from scardock_util.vutils.obabel import PDBQTtoMol2, PDBQTparser
+from scardock_util.vutils.spyrmsd_load import symmrmsd_mol2_list
 
 ref_mol2 = Path("ligand.mol2").read_text()
 undocked_pdbqt = Path("ligand.pdbqt").read_text()
@@ -193,7 +193,7 @@ print("对称性校正 RMSD (Å):", [f"{x:.2f}" for x in rmsd_values])
 
 ```python
 from pathlib import Path
-from vinautil.vutils.fpocket import FpocketBox
+from scardock_util.vutils.fpocket import FpocketBox
 
 # 对目标受体运行口袋探测
 fp = FpocketBox(pdb_file=Path("receptor.pdb"))
@@ -218,15 +218,14 @@ print(f"Vina 盒子尺寸大小: {size}")
 ├── setup.py                   # Python 包分发与 CLI 注册脚本
 ├── conda_pack.md              # Conda 打包与上传操作指引
 ├── unittest.py                # 单元测试文件
-├── vinautil/                  # 核心 Python 源码目录
-│   ├── vinautil/
-│   │   ├── scardock.py        # SCARdock 主流程实现与 CLI 接口
-│   │   ├── vina.py            # AutoDock Vina Python 封装
-│   │   ├── restore_mol2.py    # PDBQT 转 MOL2 成键信息恢复模块
-│   │   ├── parserPDBQT.py     # PDBQT 多构象文本解析器
-│   │   ├── pymolutils/        # PyMOL 插件（定点突变、色彩、加氢）
-│   │   ├── vutils/            # 口袋探测（Fpocket/DeepPocket）、RMSD 与格式转换
-│   │   └── test/              # 测试基准数据（4I24 晶体复合物结构）
+├── scardock_util/             # 核心 Python 源码目录
+│   ├── scardock.py            # SCARdock 主流程实现与 CLI 接口
+│   ├── vina.py                # AutoDock Vina Python 封装
+│   ├── restore_mol2.py        # PDBQT 转 MOL2 成键信息恢复模块
+│   ├── parserPDBQT.py         # PDBQT 多构象文本解析器
+│   ├── pymolutils/            # PyMOL 插件（定点突变、色彩、加氢）
+│   ├── vutils/                # 口袋探测（Fpocket/DeepPocket）、RMSD 与格式转换
+│   └── test/                  # 测试基准数据（4I24 晶体复合物结构）
 └── README_cn.md
 ```
 

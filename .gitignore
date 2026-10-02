@@ -1,5 +1,5 @@
 .idea
-vinautil.egg-info
+*.egg-info
 dist
 data
 build

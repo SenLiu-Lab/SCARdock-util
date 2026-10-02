@@ -14,9 +14,12 @@ from dataclasses import dataclass, field
 from typing import Iterable
 from openbabel import pybel
 try:
-    from .typecheck import typeassert
+    from scardock_util.vutils.typecheck import typeassert
 except ImportError:
-    from vinautil.utils.typecheck import typeassert
+    try:
+        from .vutils.typecheck import typeassert
+    except ImportError:
+        from .typecheck import typeassert
 
 @typeassert(file=Path, fmt=str)
 class molecule:

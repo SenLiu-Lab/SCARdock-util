@@ -1,8 +1,11 @@
 from pathlib import Path, PurePath
 from openbabel import pybel
-from vinautil.vinaconfig import xyz_point
+from scardock_util.vinaconfig import xyz_point
 
-from vinautil.utils.typecheck import typeassert
+try:
+    from scardock_util.vutils.typecheck import typeassert
+except ImportError:
+    from .vutils.typecheck import typeassert
 
 
 class center(xyz_point):

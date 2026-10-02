@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Install current vinautil package into conda build prefix
+# Install current scardock-util package into conda build prefix
 "$PYTHON" -m pip install . --no-deps --no-build-isolation -vv
 
 # Resilient clone of Meeko with official repo fallback
